@@ -14,6 +14,17 @@ based on `codex/plugins-tui-latest`. Check that `ocr review --help` lists
 `--review-plugin`. Earlier hosts only support rule packs and MCP tools and will
 reject this package's `review` contribution.
 
+To build the compatible host from source with Go installed:
+
+```sh
+git clone --branch codex/behavior-review-plugin --single-branch https://github.com/Qiyuanqiii/open-code-review.git ocr-behavior-host
+cd ocr-behavior-host
+go build -o ocr ./cmd/opencodereview
+```
+
+On Windows, use `-o ocr.exe`. Run this binary directly or put its directory first
+on `PATH` for the commands below.
+
 The plugin uses OCR's configured provider and model. Installation makes no model
 requests. A review uses the normal OCR tools, file selection, project rules,
 sessions, comment processing and filtering.

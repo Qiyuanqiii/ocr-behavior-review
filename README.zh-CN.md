@@ -8,6 +8,16 @@
 分支的 OCR，它基于你的 `codex/plugins-tui-latest` 分支。
 `ocr review --help` 应包含 `--review-plugin`。此前的插件接口只支持规则包和 MCP 工具，无法加载此插件的审阅流程。
 
+安装 Go 后可以这样构建对应宿主：
+
+```sh
+git clone --branch codex/behavior-review-plugin --single-branch https://github.com/Qiyuanqiii/open-code-review.git ocr-behavior-host
+cd ocr-behavior-host
+go build -o ocr ./cmd/opencodereview
+```
+
+Windows 使用 `-o ocr.exe`。后续命令应调用这个二进制，或将其目录放在 `PATH` 最前面。
+
 插件沿用 OCR 已配置的模型、规则、文件选择、工具、session、评论处理和过滤。安装不会调用模型。
 
 ## 安装
