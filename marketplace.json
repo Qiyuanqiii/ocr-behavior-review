@@ -5,10 +5,10 @@
     {
       "id": "behavior-review",
       "name": "Behavior Review",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Review sourced behavior contracts, search for counterexamples, and adjudicate findings with evidence.",
-      "source": "https://github.com/Qiyuanqiii/ocr-behavior-review/releases/download/v0.1.0/behavior-review-0.1.0.zip",
-      "sha256": "893d2c73063261859d55417772027b58617163ff0e049b0030f60420979c087d"
+      "source": "https://github.com/Qiyuanqiii/ocr-behavior-review/releases/download/v0.2.0/behavior-review-0.2.0.zip",
+      "sha256": "a4a3ad6809900848638b35dbcc6342dd0a326d7dd5c61aefb804e5182f510487"
     }
   ]
 }

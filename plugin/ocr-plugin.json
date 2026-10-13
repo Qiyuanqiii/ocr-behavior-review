@@ -2,10 +2,12 @@
   "schema_version": 1,
   "id": "behavior-review",
   "name": "Behavior Review",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Review sourced behavior contracts, search for counterexamples, and adjudicate findings with evidence.",
   "review": {
-    "engine": "behavior-v1",
-    "prompt": "behavior-review.md"
+    "protocol": "stdio-v1",
+    "command": "${plugin_dir}/bin/${os}-${arch}/behavior-review${exe}",
+    "args": ["--policy", "${plugin_dir}/behavior-review.md"],
+    "stages": ["contracts", "counterexamples", "adjudication"]
   }
 }

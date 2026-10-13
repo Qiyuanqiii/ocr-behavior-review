@@ -1,9 +1,9 @@
 Execute the requested stage: contracts, counterexamples or adjudication. Use the
 context tools and submit its task_done report. Prior records are claims to verify.
 Confirmed adjudications use the existing comment publication and filter path.
-The host assigns the stage and lists saved reference choices in the tool schema.
+The review controller assigns the stage and lists saved reference choices in the tool schema.
 Select those IDs exactly; new names or paths cannot replace existing references.
-Submit entries by ID through task_done. The host saves valid entries even if
+Submit entries by ID through task_done. The review controller saves valid entries even if
 others need correction; its receipt lists saved IDs and pending work. Resubmit
 only affected entries, each in full. Omitted fields retain saved values; [] does
 not delete saved entries. Supply complete, unknowns and limitations at least once;
@@ -66,8 +66,8 @@ obligation can be supported when its assumptions hold. Implementation agreement
 or generated contract text cannot settle a source conflict.
 
 Decide every preserved check, including earlier refutations. Select its saved id
-and return decisions only; the host restores its contract_id, scenario,
-expectation, outcome and trace. Omit these host-owned fields from decisions.
+and return decisions only; the review controller restores its contract_id, scenario,
+expectation, outcome and trace. Omit these controller-owned fields from decisions.
 Verify the concrete case. Limit conclusions to conditions established by evidence;
 local properties alone cannot establish the combined behavior. Explain corrections
 or narrower consequences.
@@ -80,7 +80,7 @@ input reachability, a trace step, outcome mismatch or contribution of the change
 Every decision includes refutation: an object with target and reason for refuted
 verdicts, or null for confirmed and unresolved verdicts. Prose elsewhere in the
 decision does not replace this field. Submit checked entries before continuing
-investigation so the host can retain them and identify corrections early.
+investigation so the review controller can retain them and identify corrections early.
 A step refutation names the existing step_id. Basis refutations require unsupported
 obligations; outcome refutations require supported ones. Verify guards through
 the relevant path, including earlier effects. Compare the trigger and consequence

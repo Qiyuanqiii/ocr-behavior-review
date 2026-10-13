@@ -2,19 +2,21 @@
 
 [中文说明](README.zh-CN.md)
 
-An opt-in review policy for [OpenCodeReview](https://github.com/Qiyuanqiii/open-code-review).
-It traces sourced behavior contracts, searches for counterexamples in the affected
-code, and checks the evidence before publishing findings.
+An opt-in review workflow for [OpenCodeReview](https://github.com/Qiyuanqiii/open-code-review).
+The plugin traces sourced behavior contracts, searches for counterexamples, and
+adjudicates findings against the evidence. Its executable owns the three stages,
+report schemas, saved references, corrections and completion criteria.
 
 ## Requirements
 
 Use the host integration on
 [`codex/behavior-review-plugin`](https://github.com/Qiyuanqiii/open-code-review/tree/codex/behavior-review-plugin),
-based on `codex/plugins-tui-latest`. Check that `ocr review --help` lists
-`--review-plugin`. Earlier hosts only support rule packs and MCP tools and will
-reject this package's `review` contribution.
+based on `codex/plugins-tui-latest`. The host must support review protocol
+`stdio-v1`. This interface runs other plugins with their own stage plans and
+validators. OCR supplies the configured model, tools, file/rule selection,
+sessions, comment processing and filtering.
 
-To build the compatible host from source with Go installed:
+To build the compatible host with Go installed:
 
 ```sh
 git clone --branch codex/behavior-review-plugin --single-branch https://github.com/Qiyuanqiii/open-code-review.git ocr-behavior-host
@@ -22,101 +24,89 @@ cd ocr-behavior-host
 go build -o ocr ./cmd/opencodereview
 ```
 
-On Windows, use `-o ocr.exe`. Run this binary directly or put its directory first
-on `PATH` for the commands below.
-
-The plugin uses OCR's configured provider and model. Installation makes no model
-requests. A review uses the normal OCR tools, file selection, project rules,
-sessions, comment processing and filtering.
+On Windows, use `-o ocr.exe`. Run that binary directly or put its directory first
+on `PATH`. The earlier v0.1.0 host with built-in `behavior-v1` requires an upgrade.
 
 ## Install
-
-From a checkout of this repository:
-
-```sh
-git clone https://github.com/Qiyuanqiii/ocr-behavior-review.git
-ocr plugin install ./ocr-behavior-review/plugin
-```
-
-Or install the release through its marketplace:
 
 ```sh
 ocr plugin market add behavior https://raw.githubusercontent.com/Qiyuanqiii/ocr-behavior-review/main/marketplace.json
 ocr plugin install behavior-review@behavior
 ```
 
-Keep the package installed without `--enable`. Review policies require an explicit
-selection on each invocation, including when the plugin's saved state is enabled.
+For an existing marketplace installation, update the host first, then run:
+
+```sh
+ocr plugin market refresh behavior
+ocr plugin update behavior-review
+```
+
+The release ZIP includes executables for Windows, Linux and macOS on amd64 and
+arm64. Installation copies files without executing them or calling a model.
+Explicitly starting a review runs the executable with your local permissions.
 
 ## Run once
 
 ```sh
-# Inspect selected files without calling the model
 ocr review --review-plugin behavior-review --preview
-
-# Review local changes
 ocr review --review-plugin behavior-review
-
-# Review a branch and save the full stage records
 ocr review --from main --to HEAD --review-plugin behavior-review --format json --output behavior-review.json
 ```
 
-In the TUI, choose the normal scope and background, then enter:
+In the TUI, choose the normal scope and background, then enter
+`/preview behavior-review` or `/review behavior-review`. Preview makes no model
+calls. The next plain `/review` uses the ordinary flow. Installing or globally
+enabling the plugin does not select its workflow for future reviews.
 
-```text
-/scope range main HEAD
-/preview behavior-review
-/review behavior-review
-```
-
-The next `/review` uses the ordinary review flow. Preview does not select the
-policy for a later command. A new invocation is required to rerun this policy;
-`--resume` is currently unavailable for plugin reviews.
+Plugin reviews require a fresh invocation; `--resume` is currently unavailable.
 
 ## Review method
 
-1. **Contracts:** identify consequential behavior in changed files, the sources
-   that establish it, and its dependencies on callers, data, state and ordering.
-2. **Counterexamples:** challenge the premises with cases derived from the current
-   code and its relationships, prioritizing consequence and weak evidence. This
-   stage runs even when there are no initial candidates.
-3. **Adjudication:** check each original source and attempt. Confirm, refute,
-   narrow or leave the claim unresolved using applicable evidence.
+1. **Contracts:** identify consequential behavior, its sources and the premises
+   connecting callers, data, state and execution order.
+2. **Counterexamples:** derive attempts from the affected code and its
+   relationships. Prioritize consequential premises with weak evidence and
+   continue even when there are no initial candidates.
+3. **Adjudication:** assess the original sources and preserved attempts. Confirm,
+   refute, narrow or leave claims unresolved using applicable evidence.
 
-The host retains accepted entries, restores saved links, reports specific
-corrections and preserves stage inputs during context compression. Confirmed
-findings pass through OCR's normal publication and filtering. The JSON output's
-`behavior_review` array also retains rejected attempts, unknowns, pending work and
-completion status. Required unresolved work produces incomplete coverage and a
-nonzero exit, while available findings remain in the output.
+The plugin retains valid partial entries, restores saved references and gives
+specific correction feedback. Required unknowns keep the review incomplete.
+OCR preserves task inputs during context compression, publishes accepted findings
+through its normal filter, and records incomplete coverage with a nonzero exit.
 
-This policy always requests three stages. `--effort` does not remove stages;
-model reasoning settings remain independent. OCR's existing tool-round, timeout,
-context and user-selected token limits still apply. No extra token cap is imposed;
-`--max-tokens-budget 0` means unlimited total tokens. Completion describes the work
-performed, and does not certify that the reviewed code has no defects.
+The JSON `review_plugin` array contains stage status and the plugin's report under
+`report`, including contracts, checks, rejected attempts, unknowns and pending work.
+This replaces v0.1.0's `behavior_review` field. Completion describes assigned work
+performed; it does not certify absence of defects.
+
+`--effort` does not remove declared stages. Model reasoning remains an independent
+setting. Existing tool-round, timeout, context and user-selected token limits
+apply. There is no additional total token cap; `--max-tokens-budget 0` is unlimited.
 
 ## Development
 
-The package is `plugin/ocr-plugin.json` plus `plugin/behavior-review.md`. The host
-owns the `behavior-v1` protocol, validation and execution. Change the policy here;
-change protocol behavior and its regression tests in the host repository.
+- `plugin/behavior-review.md`: general judgment principles.
+- `cmd/behavior-review/`: stage schemas, state, validation and stdio driver.
+- `plugin/ocr-plugin.json`: stage plan and executable declaration.
+
+The executable uses the Go standard library and has no dependency on OCR's
+internal packages. Build and package with Go and Python 3:
 
 ```sh
+make check test
 python scripts/package.py
-python -m unittest discover -s tests
+ocr plugin install ./dist/behavior-review-0.2.0.zip
 ```
 
-Packaging produces a ZIP with the manifest at its root and a marketplace catalog
-with the archive's SHA-256. Copy the generated catalog to `marketplace.json` when
-publishing the matching release asset. Use new version tags for changed packages.
+Packaging builds six executables and a ZIP with a matching SHA-256 marketplace
+catalog. Publish a new version for changed packages. The host's
+[protocol documentation](https://github.com/Qiyuanqiii/open-code-review/blob/codex/behavior-review-plugin/docs/review-workflow-plugins.md)
+describes the language-independent interface.
 
-Prompt changes should remain general principles. Historical misses belong in
-regression cases; evaluate discovery improvements on PRs not used to tune the
-policy, with corrected code as false-positive controls. Packaging tests establish
-installation and execution compatibility. They do not measure discovery quality.
+Keep prompt changes general. Historical misses belong in regression tests;
+evaluate discovery gains on PRs not used to tune the policy, with corrected code
+as false-positive controls. Integration tests measure execution compatibility;
+discovery quality needs separate evaluation.
 
-## License
-
-Apache-2.0. The policy and host mechanism were developed from the OCR behavior
-review prototype. See [NOTICE](NOTICE).
+Apache-2.0. See [NOTICE](NOTICE) for the original implementation attribution.
