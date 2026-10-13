@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "Behavior Review",
+  "plugins": [
+    {
+      "id": "behavior-review",
+      "name": "Behavior Review",
+      "version": "0.1.0",
+      "description": "Review sourced behavior contracts, search for counterexamples, and adjudicate findings with evidence.",
+      "source": "https://github.com/Qiyuanqiii/ocr-behavior-review/releases/download/v0.1.0/behavior-review-0.1.0.zip",
+      "sha256": "893d2c73063261859d55417772027b58617163ff0e049b0030f60420979c087d"
+    }
+  ]
+}

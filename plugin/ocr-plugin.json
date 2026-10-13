@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "behavior-review",
+  "name": "Behavior Review",
+  "version": "0.1.0",
+  "description": "Review sourced behavior contracts, search for counterexamples, and adjudicate findings with evidence.",
+  "review": {
+    "engine": "behavior-v1",
+    "prompt": "behavior-review.md"
+  }
+}

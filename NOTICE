@@ -1,0 +1,9 @@
+Behavior Review
+Copyright 2026 Qiyuanqiii
+
+This project includes a review policy developed for the OpenCodeReview behavior
+review prototype. OpenCodeReview is licensed under Apache-2.0:
+https://github.com/alibaba/open-code-review
+
+The accompanying behavior-v1 host implementation retains its original
+OpenCodeReview contributor copyright notices in the host repository.
